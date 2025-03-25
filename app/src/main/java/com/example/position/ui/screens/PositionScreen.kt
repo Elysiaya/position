@@ -64,23 +64,21 @@ fun PositionScreen(modifier: Modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        C1(
+        BaseCell(
+            modifier = Modifier.fillMaxWidth(),
             "经纬度",
-            "${location?.latitude}\n${location?.longitude}",
-            modifier = Modifier.fillMaxWidth()
+            "${location?.latitude}\n${location?.longitude}"
         )
-        C2(title1 = "海拔",content1 = location?.altitude.format2Decimal(),
+        RowCell(title1 = "海拔",content1 = location?.altitude.format2Decimal(),
             title2 = "速度", content2 = location?.speed.format2Decimal())
-        C2(title1 = "卫星数",content1 = "${gnssStatus?.satelliteCount}",
+        RowCell(title1 = "卫星数",content1 = "${gnssStatus?.satelliteCount}",
             title2 = "HDOP",content2 = location?.accuracy.format2Decimal())
 
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-        C2(title1 = "日期", content1 = currentDateTime.format(dateFormatter),
+        RowCell(title1 = "日期", content1 = currentDateTime.format(dateFormatter),
             title2 = "时间", content2 = currentDateTime.format(timeFormatter))
 
-//        C2()
-//        C2()
         if (hasPermission)
         {
             Text("Location permission granted!")
@@ -105,10 +103,10 @@ fun Float?.format3Decimal(): String {
 }
 
 @Composable
-fun C1(
+fun BaseCell(
+    modifier: Modifier = Modifier,
     title: String = "Title",
-    content: String = "Context",
-    modifier: Modifier = Modifier
+    content: String = "Context"
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -124,18 +122,18 @@ fun C1(
 }
 
 @Composable
-fun C2(
+fun RowCell(
+    modifier: Modifier = Modifier,
     title1: String = "Title", content1: String = "Context",
     title2: String = "Title2", content2: String = "Context",
-    modifier: Modifier = Modifier
 ) {
 
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        C1(title1, content1, modifier = Modifier.weight(1f))
-        C1(title2, content2, modifier = Modifier.weight(1f))
+        BaseCell(modifier = Modifier.weight(1f),title1, content1)
+        BaseCell(modifier = Modifier.weight(1f),title2, content2)
     }
 }
 
