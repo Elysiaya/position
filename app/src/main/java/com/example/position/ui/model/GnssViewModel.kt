@@ -15,7 +15,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class GnssViewModel(private val context: Context) : ViewModel() {
+class GnssViewModel(context: Context) : ViewModel() {
 
     //GNSS卫星状态信息
     private val _gnssStatus = MutableStateFlow<GnssStatus?>(null)
