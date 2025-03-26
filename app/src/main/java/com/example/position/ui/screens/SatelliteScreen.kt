@@ -1,7 +1,6 @@
 package com.example.position.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,13 +11,8 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.position.ui.model.GnssViewModel
 import kotlinx.coroutines.launch
@@ -26,9 +20,9 @@ import kotlinx.coroutines.launch
 
 // 定义 Tab 类型
 sealed class SatelliteTab(val title: String) {
-    object Status : SatelliteTab("Status")
-    object Skyplot : SatelliteTab("Skyplot")
-    object Measurements : SatelliteTab("Measurements")
+    data object Status : SatelliteTab("Status")
+    data object Skyplot : SatelliteTab("Skyplot")
+    data object Measurements : SatelliteTab("Measurements")
 }
 
 @Composable
