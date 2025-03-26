@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,59 +33,46 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.position.ui.model.GnssViewModel
+import com.example.position.ui.model.SatellitePosition
 import com.example.position.ui.theme.PositionTheme
 
 @Composable
 fun StatusTab(viewModel: GnssViewModel = viewModel()
 )
 {
-    val gnssStatus by viewModel.gnssStatus.collectAsState()
+//    val gnssStatus by viewModel.gnssStatus.collectAsState()
+    val satellites:List<SatellitePosition> by viewModel.satellitePositions.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.startListening()
     }
 
     Column(modifier = Modifier.padding(10.dp)) {
-        if (gnssStatus != null) {
-            SatelliteInfoList(gnssStatus!!)
+        if (satellites.isNotEmpty()) {
+            SatelliteInfoList(satellites)
         } else {
             Text("No GNSS data available")
         }
     }
 }
 @Composable
-fun SatelliteInfoList(gnssStatus:GnssStatus){
+fun SatelliteInfoList(satellites:List<SatellitePosition>){
     // 表头
     SatelliteTableHeader()
     LazyColumn ()
     {
-        items (gnssStatus.satelliteCount)
-        {
-                satelliteIndex->
-            val svid = gnssStatus.getSvid(satelliteIndex)
-            val GNSStype = GetGNSSType(gnssStatus.getConstellationType(satelliteIndex))
-            val Freq = (gnssStatus.getCarrierFrequencyHz(satelliteIndex)/1000000).format3Decimal()
-            val NavMsg = gnssStatus.hasEphemerisData(satelliteIndex).toString()
-            val Elev = gnssStatus.getElevationDegrees(satelliteIndex).format2Decimal()
-            val Azim = gnssStatus.getAzimuthDegrees(satelliteIndex).format2Decimal()
-            SatelliteInfoRow(svid, GNSStype, Freq, NavMsg, Elev, Azim)
+        itemsIndexed(
+            items = satellites
+        ){ _, satellite ->
+            SatelliteInfoRow(
+                satellite.svid,
+                satellite.GNSSType,
+                (satellite.Freq/1000000).format3Decimal(),
+                satellite.NavMsg.toString(),
+                satellite.elevation.format2Decimal(),
+                satellite.azimuth.format2Decimal())
         }
-
     }
-
-//    Column (){
-//        (0 until gnssStatus.satelliteCount).forEach()
-//        {
-//                satelliteIndex->
-//            val svid = gnssStatus.getSvid(satelliteIndex)
-//            val GNSStype = GetGNSSType(gnssStatus.getConstellationType(satelliteIndex))
-//            val Freq = (gnssStatus.getCarrierFrequencyHz(satelliteIndex)/1000000).format3Decimal()
-//            val NavMsg = gnssStatus.hasEphemerisData(satelliteIndex).toString()
-//            val Elev = gnssStatus.getElevationDegrees(satelliteIndex).format2Decimal()
-//            val Azim = gnssStatus.getAzimuthDegrees(satelliteIndex).format2Decimal()
-//            SatelliteInfoRow(svid, GNSStype, Freq, NavMsg, Elev, Azim)
-//        }
-//    }
 }
 
 // 表头组件
@@ -141,33 +130,6 @@ fun TableCell(text: String, modifier: Modifier)
             textAlign = TextAlign.Center,
             fontSize = 13.sp
         )
-    }
-
-}
-
-fun GetGNSSType(satelliteIndex:Int):String
-{
-    when(satelliteIndex)
-    {
-//        中国国旗
-        CONSTELLATION_BEIDOU -> return "\uD83C\uDDE8\uD83C\uDDF3"
-//        美国国旗
-        CONSTELLATION_GPS -> return "\uD83C\uDDFA\uD83C\uDDF2"
-//        欧盟旗帜
-        CONSTELLATION_GALILEO -> return "\uD83C\uDDEA\uD83C\uDDFA"
-//        俄罗斯
-        CONSTELLATION_GLONASS -> return "\uD83C\uDDF7\uD83C\uDDFA"
-//        日本
-        CONSTELLATION_QZSS -> return "\uD83C\uDDEF\uD83C\uDDF5"
-//        印度
-        CONSTELLATION_IRNSS -> return "\uD83C\uDDEE\uD83C\uDDF3"
-
-        CONSTELLATION_SBAS -> return "SBAS"
-        CONSTELLATION_UNKNOWN -> return "unknown"
-        else -> {
-            return "unknown"
-        }
-
     }
 
 }
